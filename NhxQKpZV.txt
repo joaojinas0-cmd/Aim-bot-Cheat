@@ -1,0 +1,18 @@
+TARGET = AimBotCheat.dylib
+SOURCE = AimBotCheat.mm
+ARCH = arm64
+MIN_IOS = 13.0
+
+CC = clang++
+FRAMEWORKS = -framework Foundation -framework UIKit -framework CoreGraphics
+CFLAGS = -shared -fPIC -arch $(ARCH) -isysroot $(shell xcrun --sdk iphoneos --show-sdk-path)
+CFLAGS += -mios-version-min=$(MIN_IOS) -O2 -fobjc-arc
+
+all: $(TARGET)
+
+$(TARGET): $(SOURCE)
+	$(CC) $(CFLAGS) $(FRAMEWORKS) -o $@ $<
+	@echo "✅ Compilado!"
+
+clean:
+	rm -f $(TARGET)
