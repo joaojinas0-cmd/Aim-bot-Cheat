@@ -25,10 +25,18 @@ jobs:
           -framework CoreGraphics \
           -O2 -fobjc-arc \
           -o AimBotCheat.dylib \
-          sVjyNem5.cpp
+          sVjyNem5.mm 2>&1 | tee build.log
     
     - name: Upload dylib
       uses: actions/upload-artifact@v3
+      if: success()
       with:
         name: AimBotCheat-dylib
         path: AimBotCheat.dylib
+    
+    - name: Upload build log
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: build-log
+        path: build.log
