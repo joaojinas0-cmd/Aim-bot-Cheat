@@ -1,0 +1,34 @@
+name: Build iOS Dylib
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build dylib for iOS (arm64)
+      run: |
+        clang++ -shared -fPIC \
+          -arch arm64 \
+          -isysroot $(xcrun --sdk iphoneos --show-sdk-path) \
+          -mios-version-min=13.0 \
+          -framework Foundation \
+          -framework UIKit \
+          -framework CoreGraphics \
+          -O2 -fobjc-arc \
+          -o AimBotCheat.dylib \
+          sVjyNem5.cpp
+    
+    - name: Upload dylib
+      uses: actions/upload-artifact@v3
+      with:
+        name: AimBotCheat-dylib
+        path: AimBotCheat.dylib
