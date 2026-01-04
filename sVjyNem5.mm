@@ -20,9 +20,9 @@ typedef struct { bool enabled; float fov; float aimSpeed; } AimBotConfig;
 static AimBotConfig g_config = { true, 50.0f, 5.0f };
 static pthread_mutex_t g_configMutex = PTHREAD_MUTEX_INITIALIZER;
 
-static Vector3 Vector3Make(float x, float y, float z) { return {x, y, z}; }
-static Vector3 Vector3Subtract(Vector3 a, Vector3 b) { return {a.x-b.x, a.y-b.y, a.z-b.z}; }
-static Vector3 Vector3Normalize(Vector3 v) { float l=sqrt(v.x*v.x+v.y*v.y+v.z*v.z); return l>0?(Vector3){v.x/l,v.y/l,v.z/l}:v; }
+static Vector3 Vector3Make(float x, float y, float z) { Vector3 v = {x, y, z}; return v; }
+static Vector3 Vector3Subtract(Vector3 a, Vector3 b) { Vector3 v = {a.x-b.x, a.y-b.y, a.z-b.z}; return v; }
+static Vector3 Vector3Normalize(Vector3 v) { float l=sqrt(v.x*v.x+v.y*v.y+v.z*v.z); Vector3 result = l>0?Vector3Make(v.x/l,v.y/l,v.z/l):v; return result; }
 
 static id FindPlayerObject() {
     @try { return [NSClassFromString(@"UnityEngine.GameObject") performSelector:@selector(Find:) withObject:@"Player"]; }
@@ -48,9 +48,9 @@ static CGPoint WorldToScreenPoint(id camera, Vector3 worldPos) {
 static Vector3 GetWorldPosition(id obj) {
     @try {
         id pos = [[obj performSelector:@selector(get_transform)] performSelector:@selector(get_position)];
-        if (!pos) return {0,0,0};
+        if (!pos) return Vector3Make(0,0,0);
         return Vector3Make([[pos performSelector:@selector(get_x)] floatValue], [[pos performSelector:@selector(get_y)] floatValue], [[pos performSelector:@selector(get_z)] floatValue]);
-    } @catch (...) { return {0,0,0}; }
+    } @catch (...) { return Vector3Make(0,0,0); }
 }
 
 static void AimAtEnemy(id player, id enemy, float speed) {
